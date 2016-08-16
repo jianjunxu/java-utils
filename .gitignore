@@ -1,12 +1,29 @@
-*.class
+**/target
+**/**/target
+**/build
+**/.svn
+**/bin/
+**/.classpath
+**/.project
+**/.settings
+**/.springBean
+**/*.iml
+**/*.idea
+**/.externalToolBuilders
+**/src.test-output
 
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
-
-# Package Files #
-*.jar
-*.war
-*.ear
-
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
+/target
+/build
+/.svn
+/bin/
+/.classpath
+/.project
+/.settings
+/.springBean
+/*.iml
+/*.idea
+/.externalToolBuilders
+/src.test-output
+**/gen-java
+*.iml
+.DS_Store
