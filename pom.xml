@@ -131,6 +131,20 @@
 			<version>19.0</version>
 		</dependency>
 		<!-- guava end -->
+		<!-- javax.annotation begin -->
+		<dependency>
+			<groupId>javax.annotation</groupId>
+			<artifactId>jsr250-api</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<!-- javax.annotation end -->
+		<!-- fastJson begin -->
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>fastjson</artifactId>
+			<version>1.2.12</version>
+		</dependency>
+		<!-- fastJson end -->
 	</dependencies>
 	<build>
 		<finalName>java-utils</finalName>
@@ -150,6 +164,14 @@
 					</connectors>
 					<stopKey>stopkey</stopKey>
 					<stopPort>${jetty.stopPort}</stopPort>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
 				</configuration>
 			</plugin>
 		</plugins>
