@@ -1,13 +1,11 @@
 package com.jxlx.jayden.guava;
 
-import com.google.common.base.CaseFormat;
-import com.google.common.base.CharMatcher;
-import com.google.common.base.Charsets;
-import com.google.common.base.Joiner;
-import com.google.common.base.Splitter;
+import com.google.common.base.*;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * User : jianjun.xu
@@ -86,7 +84,41 @@ public class StringOper {
         System.out.println("result:" + result);
     }
 
+	/**
+	 * Strings相关
+	 * Strings.isNullOrEmpty
+	 * Strings.emptyToNull
+	 * Strings.nullToEmpty
+	 * Strings.repeat 复制
+	 * Strings.padStart 可用于日期补充
+	 * Strings.commonPrefix 最长前缀
+	 */
+	public static void strings() {
+		boolean isNullOrEmpty = Strings.isNullOrEmpty("");
+		System.out.println("isNullOrEmpty:" + isNullOrEmpty);
+		String emptyToNull = Strings.emptyToNull("");
+		System.out.println("emptyToNull:" + emptyToNull);
+		String nullToEmpty = Strings.nullToEmpty(null);
+		System.out.println("nullToEmpty:" + nullToEmpty);
+		String repeat = Strings.repeat("hey", 3);
+		System.out.println("repeat:" + repeat);
+		String padStart = Strings.padStart("6",2, '0');
+		System.out.println("padStart:" + padStart);
+		String commonPrefix = Strings.commonPrefix("commonPrefix","comm");
+		System.out.println("commonPrefix:" + commonPrefix);
+	}
+
     public static void main(String[] args) {
-        splitterStr();
+		Set<String> stringSet = Sets.newTreeSet();
+		stringSet.add("山西");
+		stringSet.add("北京");
+		stringSet.add("上海");
+		stringSet.add("天津");
+		stringSet.add("云南");
+		System.out.println(stringSet);
+		System.out.println(Joiner.on(",").skipNulls().join(stringSet));
+		//上海,云南,北京,天津,山西
+
+        strings();
     }
 }
