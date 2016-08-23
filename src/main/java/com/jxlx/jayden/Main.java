@@ -18,13 +18,16 @@ public class Main {
 
 	public static void main(String[] args) {
 		List<String> list = Lists.newArrayList("aa","bb","cc");
-		List<String> transList = Lists.transform(list, new Function<String, String>() {
-			@Override
-			public String apply(String input) {
-				return input.toUpperCase();
-			}
-		});
+		List<String> transList = Lists.transform(list, TOUpperCase.INSTANCE);
 		System.out.println(list);
 		System.out.println(transList);
+	}
+
+	private enum TOUpperCase implements Function<String,String> {
+		INSTANCE;
+		@Override
+		public String apply(String input) {
+			return input.toUpperCase();
+		}
 	}
 }
