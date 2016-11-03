@@ -1,12 +1,6 @@
 package com.jxlx.jayden;
 
 import com.google.common.base.Function;
-import com.google.common.base.Functions;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
-import org.springframework.util.CollectionUtils;
-
-import java.util.List;
 
 /**
  * User : jianjun.xu
@@ -17,10 +11,12 @@ import java.util.List;
 public class Main {
 
 	public static void main(String[] args) {
-		List<String> list = Lists.newArrayList("aa","bb","cc");
-		List<String> transList = Lists.transform(list, TOUpperCase.INSTANCE);
-		System.out.println(list);
-		System.out.println(transList);
+//		List<String> list = Lists.newArrayList("aa","bb","cc");
+//		List<String> transList = Lists.transform(list, TOUpperCase.INSTANCE);
+//		System.out.println(list);
+//		System.out.println(transList);
+		System.out.println((1 << 16) - 1);
+		System.out.println(Integer.toBinaryString(-1));
 	}
 
 	private enum TOUpperCase implements Function<String,String> {
