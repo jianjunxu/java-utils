@@ -31,6 +31,7 @@ public class MapServer {
      *
      * @param param
      * @return
+     * eg.http://restapi.amap.com/v3/distance?origins=116.506218%2C40.006226&key=d90b58069d86d84624d73a098e7b4383&destination=116.480665%2C39.996404
      */
     public DistanceResult getDistance(DistanceParam param) {
         Preconditions.checkNotNull(param, "DistanceParam is null.");
@@ -45,6 +46,7 @@ public class MapServer {
      * 根据关键字获取位置信息，经纬度等信息
      * @param placeParam
      * @return
+     * eg：http://restapi.amap.com/v3/place/text?keywords=%E5%A4%A9%E5%AE%89%E9%97%A8&page=1&citylimit=true&offset=1&key=d90b58069d86d84624d73a098e7b4383&city=beijing
      */
     public PlaceResult getPlaceInfo(PlaceParam placeParam) {
         Preconditions.checkNotNull(placeParam, "PlaceParam is null.");
@@ -77,17 +79,18 @@ public class MapServer {
     }
     public static void main(String[] args) {
         MapServer server = new MapServer();
-//        DistanceParam param = new DistanceParam();
-//        param.setKey(Constant.KEY_CAR_LINE);
-//        param.setOrigins("116.506218,40.006226");
-//        param.setDestination("116.480665,39.996404");
-//        DistanceResult result = server.getDistance(param);
-//        LOGGER.info("------result:" + JSON.toJSONString(result));
-        PlaceParam placeParam = new PlaceParam();
-        placeParam.setKey(Constant.KEY_CAR_LINE);
-        placeParam.setCity("beijing");
-        placeParam.setKeywords("天安门");
-        PlaceResult placeResult = server.getPlaceInfo(placeParam);
-        LOGGER.info("------placeResult:" + JSON.toJSONString(placeResult));
+        DistanceParam param = new DistanceParam();
+        param.setKey(Constant.KEY_CAR_LINE);
+        param.setOrigins("116.506218,40.006226");
+        param.setDestination("116.480665,39.996404");
+        DistanceResult result = server.getDistance(param);
+        LOGGER.info("------result:" + JSON.toJSONString(result));
+
+//        PlaceParam placeParam = new PlaceParam();
+//        placeParam.setKey(Constant.KEY_CAR_LINE);
+//        placeParam.setCity("beijing");
+//        placeParam.setKeywords("天安门");
+//        PlaceResult placeResult = server.getPlaceInfo(placeParam);
+//        LOGGER.info("------placeResult:" + JSON.toJSONString(placeResult));
     }
 }
