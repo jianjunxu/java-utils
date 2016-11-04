@@ -8,4 +8,6 @@ public interface Constant {
     String KEY_CAR_LINE = "d90b58069d86d84624d73a098e7b4383";
     /** 距离测量uri */
     String DISTANCE_URI = "http://restapi.amap.com/v3/distance";
+    /** 关键字搜索位置信息 */
+    String SEARCH_PLACE_URI = "http://restapi.amap.com/v3/place/text";
 }

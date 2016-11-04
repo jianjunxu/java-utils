@@ -5,7 +5,9 @@ import com.google.common.base.Preconditions;
 import com.jxlx.carcar.common.Constant;
 import com.jxlx.carcar.convert.CarConverter;
 import com.jxlx.carcar.entity.params.DistanceParam;
+import com.jxlx.carcar.entity.params.PlaceParam;
 import com.jxlx.carcar.entity.result.DistanceResult;
+import com.jxlx.carcar.entity.result.PlaceResult;
 import com.jxlx.carcar.utils.AbstractResponseHandler;
 import com.jxlx.carcar.utils.HttpClientUtils;
 import com.jxlx.carcar.utils.NetWorkURL;
@@ -35,7 +37,30 @@ public class MapServer {
         String methodURI = Constant.DISTANCE_URI;
         Map<String, String> parameters = CarConverter.convertDistanceParam(param);
         String url = NetWorkURL.toURL(methodURI, parameters);
-        HttpGet httpGet = new HttpGet(url);
+        String response = httpGetAccess(new HttpGet(url));
+        return JSON.parseObject(response, DistanceResult.class);
+    }
+
+    /**
+     * 根据关键字获取位置信息，经纬度等信息
+     * @param placeParam
+     * @return
+     */
+    public PlaceResult getPlaceInfo(PlaceParam placeParam) {
+        Preconditions.checkNotNull(placeParam, "PlaceParam is null.");
+        String methodURI = Constant.SEARCH_PLACE_URI;
+        Map<String, String> parameters = CarConverter.convertPlaceParam(placeParam);
+        String url = NetWorkURL.toURL(methodURI, parameters);
+        String response = httpGetAccess(new HttpGet(url));
+        return JSON.parseObject(response, PlaceResult.class);
+    }
+
+    /**
+     * http get
+     * @param httpGet
+     * @return response
+     */
+    private String httpGetAccess(HttpGet httpGet){
         String response = "";
         try {
             HttpClientUtils httpClient = new HttpClientUtils();
@@ -48,16 +73,21 @@ public class MapServer {
         } catch (Exception e) {
             LOGGER.error("IOException.ex:{}", e.getMessage(), e);
         }
-        return JSON.parseObject(response, DistanceResult.class);
+        return response;
     }
-
     public static void main(String[] args) {
         MapServer server = new MapServer();
-        DistanceParam param = new DistanceParam();
-        param.setKey(Constant.KEY_CAR_LINE);
-        param.setOrigins("116.506218,40.006226");
-        param.setDestination("116.480665,39.996404");
-        DistanceResult result = server.getDistance(param);
-        LOGGER.info("------result:" + JSON.toJSONString(result));
+//        DistanceParam param = new DistanceParam();
+//        param.setKey(Constant.KEY_CAR_LINE);
+//        param.setOrigins("116.506218,40.006226");
+//        param.setDestination("116.480665,39.996404");
+//        DistanceResult result = server.getDistance(param);
+//        LOGGER.info("------result:" + JSON.toJSONString(result));
+        PlaceParam placeParam = new PlaceParam();
+        placeParam.setKey(Constant.KEY_CAR_LINE);
+        placeParam.setCity("beijing");
+        placeParam.setKeywords("天安门");
+        PlaceResult placeResult = server.getPlaceInfo(placeParam);
+        LOGGER.info("------placeResult:" + JSON.toJSONString(placeResult));
     }
 }
