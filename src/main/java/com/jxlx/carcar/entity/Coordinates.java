@@ -7,6 +7,7 @@ public class Coordinates {
     private String desName;
     private String latitude;
     private String longitude;
+    private String location;
 
     public Coordinates() {
     }
@@ -23,6 +24,14 @@ public class Coordinates {
 
     public void setDesName(String desName) {
         this.desName = desName;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 
     public String getLatitude() {

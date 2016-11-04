@@ -33,4 +33,8 @@ public class MockCoordinates {
         list.add(airPort);
         return list;
     }
+
+    public static List<String> initDesc() {
+        return Lists.newArrayList("望京SOHO", "天安门", "故宫", "天坛", "奥林匹克森林公园", "长城", "鸟巢", "水立方", "北京首都国际机场");
+    }
 }
