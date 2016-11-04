@@ -23,8 +23,8 @@ import java.util.Map;
 /**
  * Created by jayden on 16/11/4.
  */
-public class MapServer {
-    private static final Logger LOGGER = LoggerFactory.getLogger(MapServer.class);
+public class MapService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(MapService.class);
 
     /**
      * 距离测量
@@ -78,7 +78,7 @@ public class MapServer {
         return response;
     }
     public static void main(String[] args) {
-        MapServer server = new MapServer();
+        MapService server = new MapService();
         DistanceParam param = new DistanceParam();
         param.setKey(Constant.KEY_CAR_LINE);
         param.setOrigins("116.506218,40.006226");
