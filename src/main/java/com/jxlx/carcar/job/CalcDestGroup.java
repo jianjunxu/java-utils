@@ -2,6 +2,7 @@ package com.jxlx.carcar.job;
 
 import com.alibaba.fastjson.JSON;
 import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.jxlx.carcar.common.Constant;
@@ -15,6 +16,7 @@ import com.jxlx.carcar.mock.MockCoordinates;
 import com.jxlx.carcar.service.MapService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -27,9 +29,10 @@ public class CalcDestGroup {
     private static final Logger LOGGER = LoggerFactory.getLogger(CalcDestGroup.class);
 
     public static void main(String[] args) {
-        //1 init
+        // 1 init
         List<String> descList = MockCoordinates.initDesc();
-        //2 packaging required params
+        Preconditions.checkArgument(!CollectionUtils.isEmpty(descList), "init data empty.");
+        // 2 packaging required params
         final List<DistancePointsInfo> infos = Lists.newArrayList();
         List<PlaceParam> dests = Lists.newArrayList();
         int totalSize = descList.size();
@@ -55,6 +58,7 @@ public class CalcDestGroup {
         MapService service = new MapService();
         // 3 批量获取经纬度 dests
         List<PlaceResult> placeResults = service.batchGetPlaceInfo(dests);
+        Preconditions.checkArgument(!CollectionUtils.isEmpty(placeResults), "placeResults is empty.");
         Map<String, PlaceResult> name2place = Maps.uniqueIndex(placeResults, new Function<PlaceResult, String>() {
             @Override
             public String apply(PlaceResult input) {
@@ -62,8 +66,10 @@ public class CalcDestGroup {
             }
         });
         for (DistancePointsInfo info :infos) {
-            info.setOriLocation(name2place.get(info.getOriId()).getPois().get(0).getLocation());
-            info.setDestLocation(name2place.get(info.getDestId()).getPois().get(0).getLocation());
+            PlaceResult oriPlace = name2place.get(info.getOriId());
+            PlaceResult destPlace = name2place.get(info.getDestId());
+            info.setOriLocation(oriPlace.getPois().get(0).getLocation());
+            info.setDestLocation(destPlace.getPois().get(0).getLocation());
         }
         // 4 计算距离 infos
         List<DistanceParam> distanceParams = Lists.transform(infos, new Function<DistancePointsInfo, DistanceParam>() {

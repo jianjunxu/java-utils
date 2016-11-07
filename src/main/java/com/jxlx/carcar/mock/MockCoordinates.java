@@ -35,7 +35,8 @@ public class MockCoordinates {
     }
 
     public static List<String> initDesc() {
-        return Lists.newArrayList("1001,北京,望京SOHO",
+        return Lists.newArrayList(
+                "1001,北京,望京SOHO",
                 "1002,北京,天安门",
                 "1003,北京,故宫",
                 "1004,北京,天坛",

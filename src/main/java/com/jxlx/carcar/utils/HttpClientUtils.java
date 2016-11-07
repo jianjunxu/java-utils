@@ -29,7 +29,7 @@ public class HttpClientUtils {
 //		<constructor-arg name="connectionRequestTimeout" value="500"/>
 //		<!-- 是否进行陈旧连接检查, 如果不开启, 则启动陈旧连接关闭线程 -->
 //		<constructor-arg name="staleConnCheck" value="true"/>
-        this(2000, 2000, 2000, true);
+        this(2000, 2000, 2000, true, 5);
     }
 
     /**
@@ -39,8 +39,9 @@ public class HttpClientUtils {
      * @param connectionTimeout       建立连接超时时间
      * @param connectionRequestTimeout    从连接池获取连接的超时时间
      * @param staleConnCheck 是否进行陈旧连接检查, 如果不开启, 则启动陈旧连接关闭线程
+     * @param tryTimes 重试次数
      */
-    public HttpClientUtils(int socketTimeout, int connectionTimeout, int connectionRequestTimeout, boolean staleConnCheck) throws Exception {
+    public HttpClientUtils(int socketTimeout, int connectionTimeout, int connectionRequestTimeout, boolean staleConnCheck, int tryTimes) throws Exception {
 
         RequestConfig config = RequestConfig.custom()
                 .setSocketTimeout(socketTimeout) // 读取超时
@@ -50,7 +51,7 @@ public class HttpClientUtils {
                 .build();
         httpClient = HttpClientBuilder.create()
                 .setDefaultRequestConfig(config)
-                .setRetryHandler(new DefaultHttpRequestRetryHandler())  //默认失败后重发3次，可用别的构造方法指定重发次数
+                .setRetryHandler(new DefaultHttpRequestRetryHandler(tryTimes, true))  //默认失败后重发3次，可用别的构造方法指定重发次数
                 .build();
     }
 

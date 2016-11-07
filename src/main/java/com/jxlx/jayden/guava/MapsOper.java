@@ -106,7 +106,7 @@ public class MapsOper {
 		key2value.put("key1", "value1");
 		key2value.put("key2", "value2");
 		key2value.put("key3", "value3");
-		key2value.put("TEST", "test");
+		key2value.put("TEST", "Test");
 		Map<String, String> resultMap = Maps.filterEntries(key2value, new Predicate<Map.Entry<String, String>>() {
 			@Override
 			public boolean apply(Map.Entry<String, String> input) {

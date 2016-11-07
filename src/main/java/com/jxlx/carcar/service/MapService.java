@@ -12,6 +12,7 @@ import com.jxlx.carcar.entity.result.PlaceResult;
 import com.jxlx.carcar.utils.AbstractResponseHandler;
 import com.jxlx.carcar.utils.HttpClientUtils;
 import com.jxlx.carcar.utils.NetWorkURL;
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.util.EntityUtils;
@@ -33,8 +34,7 @@ public class MapService {
      * 距离测量
      *
      * @param param
-     * @return
-     * eg.http://restapi.amap.com/v3/distance?origins=116.506218%2C40.006226&key=d90b58069d86d84624d73a098e7b4383&destination=116.480665%2C39.996404
+     * @return eg.http://restapi.amap.com/v3/distance?origins=116.506218%2C40.006226&key=d90b58069d86d84624d73a098e7b4383&destination=116.480665%2C39.996404
      */
     public DistanceResult getDistance(DistanceParam param) {
         Preconditions.checkNotNull(param, "DistanceParam is null.");
@@ -42,7 +42,15 @@ public class MapService {
         Map<String, String> parameters = CarConverter.convertDistanceParam(param);
         String url = NetWorkURL.toURL(methodURI, parameters);
         String response = httpGetAccess(new HttpGet(url));
+        if (StringUtils.isBlank(response)) {
+            LOGGER.info("response is blank.param:{}", JSON.toJSONString(param));
+            return null;
+        }
         DistanceResult result = JSON.parseObject(response, DistanceResult.class);
+        if (result == null) {
+            LOGGER.info("JSON.parseObject error.response:{}", JSON.toJSONString(response));
+            return null;
+        }
         result.setOriId(param.getOriId());
         result.setDestId(param.getDestId());
         return result;
@@ -50,17 +58,22 @@ public class MapService {
 
     public List<DistanceResult> batchGetDistance(List<DistanceParam> params) {
         List<DistanceResult> resultList = Lists.newArrayList();
-        for (DistanceParam param : params){
-            resultList.add(getDistance(param));
+        for (DistanceParam param : params) {
+            DistanceResult result = getDistance(param);
+            if (result != null) {
+                resultList.add(result);
+            } else {
+                LOGGER.warn("result is null.placeParams:{}", JSON.toJSONString(param));
+            }
         }
         return resultList;
     }
 
     /**
      * 根据关键字获取位置信息，经纬度等信息
+     *
      * @param placeParam
-     * @return
-     * eg：http://restapi.amap.com/v3/place/text?keywords=%E5%A4%A9%E5%AE%89%E9%97%A8&page=1&citylimit=true&offset=1&key=d90b58069d86d84624d73a098e7b4383&city=beijing
+     * @return eg：http://restapi.amap.com/v3/place/text?keywords=%E5%A4%A9%E5%AE%89%E9%97%A8&page=1&citylimit=true&offset=1&key=d90b58069d86d84624d73a098e7b4383&city=beijing
      */
     public PlaceResult getPlaceInfo(PlaceParam placeParam) {
         Preconditions.checkNotNull(placeParam, "PlaceParam is null.");
@@ -68,45 +81,63 @@ public class MapService {
         Map<String, String> parameters = CarConverter.convertPlaceParam(placeParam);
         String url = NetWorkURL.toURL(methodURI, parameters);
         String response = httpGetAccess(new HttpGet(url));
+        if (StringUtils.isBlank(response)) {
+            LOGGER.info("response is blank.placeParam:{}", JSON.toJSONString(placeParam));
+            return null;
+        }
         PlaceResult result = JSON.parseObject(response, PlaceResult.class);
+        if (result == null) {
+            LOGGER.info("JSON.parseObject error.response:{}", JSON.toJSONString(response));
+            return null;
+        }
         result.setPlaceId(placeParam.getPlaceId());
         return result;
     }
 
     /**
      * 批量 TODO 后改进
+     *
      * @param placeParams
      * @return
      */
-    public List<PlaceResult> batchGetPlaceInfo(List<PlaceParam> placeParams){
+    public List<PlaceResult> batchGetPlaceInfo(List<PlaceParam> placeParams) {
         List<PlaceResult> resultList = new ArrayList(placeParams.size());
-        for (PlaceParam param:placeParams){
+        for (PlaceParam param : placeParams) {
             PlaceResult result = getPlaceInfo(param);
-            resultList.add(result);
+            if (result != null) {
+                resultList.add(result);
+            } else {
+                LOGGER.warn("result is null.placeParams:{}", JSON.toJSONString(param));
+            }
         }
         return resultList;
     }
 
     /**
      * http get
+     *
      * @param httpGet
      * @return response
      */
-    private String httpGetAccess(HttpGet httpGet){
+    private String httpGetAccess(HttpGet httpGet) {
         String response = "";
-        try {
-            HttpClientUtils httpClient = new HttpClientUtils();
-            response = httpClient.executeWithLog(httpGet, new AbstractResponseHandler<String>() {
-                @Override
-                public String handle(HttpEntity entity) throws IOException {
-                    return EntityUtils.toString(entity);
-                }
-            });
-        } catch (Exception e) {
-            LOGGER.error("IOException.ex:{}", e.getMessage(), e);
+        for (int i = 0; i < 3; i++) {
+            try {
+                HttpClientUtils httpClient = new HttpClientUtils();
+                response = httpClient.executeWithLog(httpGet, new AbstractResponseHandler<String>() {
+                    @Override
+                    public String handle(HttpEntity entity) throws IOException {
+                        return EntityUtils.toString(entity);
+                    }
+                });
+                break;
+            } catch (Exception e) {
+                LOGGER.error("IOException {} times.ex:{}", (i + 1), e.getMessage(), e);
+            }
         }
         return response;
     }
+
     public static void main(String[] args) {
 //        MapService server = new MapService();
 //        DistanceParam param = new DistanceParam();
