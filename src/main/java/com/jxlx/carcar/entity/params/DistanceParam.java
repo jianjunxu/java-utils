@@ -22,6 +22,11 @@ public class DistanceParam extends BaseParam {
     private String type;
     private String sig;
 
+    /** 出发地 */
+    private String oriId;
+    /** 目的地 */
+    private String destId;
+
     public String getOrigins() {
         return origins;
     }
@@ -54,4 +59,19 @@ public class DistanceParam extends BaseParam {
         this.sig = sig;
     }
 
+    public String getOriId() {
+        return oriId;
+    }
+
+    public void setOriId(String oriId) {
+        this.oriId = oriId;
+    }
+
+    public String getDestId() {
+        return destId;
+    }
+
+    public void setDestId(String destId) {
+        this.destId = destId;
+    }
 }

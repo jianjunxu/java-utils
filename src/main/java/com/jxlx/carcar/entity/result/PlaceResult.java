@@ -12,6 +12,8 @@ public class PlaceResult extends BaseResult {
 
     /** 搜索方案数目(最大值为1000) */
     private String count;
+    /** 与placeParam中placeId对应 */
+    private String placeId;
     private List<PoiInfo> pois;
 
     public String getCount() {
@@ -28,5 +30,21 @@ public class PlaceResult extends BaseResult {
 
     public void setPois(List<PoiInfo> pois) {
         this.pois = pois;
+    }
+
+    public String getPlaceId() {
+        return placeId;
+    }
+
+    public void setPlaceId(String placeId) {
+        this.placeId = placeId;
+    }
+
+    @Override
+    public String toString() {
+        return "PlaceResult{" +
+                "count='" + count + '\'' +
+                ", pois=" + pois +
+                '}';
     }
 }

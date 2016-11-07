@@ -1,5 +1,7 @@
 package com.jxlx.carcar.entity.params;
 
+import com.jxlx.carcar.common.Constant;
+
 import java.io.Serializable;
 
 /**
@@ -8,7 +10,7 @@ import java.io.Serializable;
 public class BaseParam implements Serializable {
     private static final long serialVersionUID = -3915273430959201047L;
     /** 用户在高德地图官网申请Web服务API类型KEY */
-    private String key;
+    private String key = Constant.KEY_CAR_LINE;
 
     /** 返回数据格式类型, 可选值：JSON,XML 缺省值JSON*/
     private String output;

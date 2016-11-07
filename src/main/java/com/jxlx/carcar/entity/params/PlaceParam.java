@@ -11,7 +11,8 @@ public class PlaceParam extends BaseParam {
     /** 查询城市 可选值：城市中文、中文全拼、citycode、adcode 如：北京/beijing/010/110000 */
     private String city;
     /** 仅返回指定城市数据 可选值：true/false 缺省:false */
-    private boolean citylimit = true;
+    private boolean citylimit;
+    private String placeId;
     private int offset = 1;
     private int page = 1;
 
@@ -49,6 +50,14 @@ public class PlaceParam extends BaseParam {
 
     public int getPage() {
         return page;
+    }
+
+    public String getPlaceId() {
+        return placeId;
+    }
+
+    public void setPlaceId(String placeId) {
+        this.placeId = placeId;
     }
 
     public void setPage(int page) {

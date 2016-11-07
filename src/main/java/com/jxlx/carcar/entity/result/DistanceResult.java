@@ -23,6 +23,10 @@ public class DistanceResult extends BaseResult {
     private static final long serialVersionUID = 8501157814867534608L;
 
     List<DistanceDo> results;
+    /** 出发地 */
+    private String oriId;
+    /** 目的地 */
+    private String destId;
 
     public List<DistanceDo> getResults() {
         return results;
@@ -30,5 +34,21 @@ public class DistanceResult extends BaseResult {
 
     public void setResults(List<DistanceDo> results) {
         this.results = results;
+    }
+
+    public String getOriId() {
+        return oriId;
+    }
+
+    public void setOriId(String oriId) {
+        this.oriId = oriId;
+    }
+
+    public String getDestId() {
+        return destId;
+    }
+
+    public void setDestId(String destId) {
+        this.destId = destId;
     }
 }

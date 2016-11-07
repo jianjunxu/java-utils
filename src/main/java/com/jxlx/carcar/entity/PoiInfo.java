@@ -68,4 +68,16 @@ public class PoiInfo implements Serializable {
     public void setAdname(String adname) {
         this.adname = adname;
     }
+
+    @Override
+    public String toString() {
+        return "PoiInfo{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", address='" + address + '\'' +
+                ", location='" + location + '\'' +
+                ", cityname='" + cityname + '\'' +
+                ", adname='" + adname + '\'' +
+                '}';
+    }
 }

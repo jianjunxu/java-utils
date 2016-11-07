@@ -35,6 +35,14 @@ public class MockCoordinates {
     }
 
     public static List<String> initDesc() {
-        return Lists.newArrayList("望京SOHO", "天安门", "故宫", "天坛", "奥林匹克森林公园", "长城", "鸟巢", "水立方", "北京首都国际机场");
+        return Lists.newArrayList("1001,北京,望京SOHO",
+                "1002,北京,天安门",
+                "1003,北京,故宫",
+                "1004,北京,天坛",
+                "1005,北京,奥林匹克森林公园",
+                "1006,北京,长城",
+                "1007,北京,鸟巢",
+                "1008,北京,水立方",
+                "1009,北京,北京首都国际机场");
     }
 }

@@ -29,7 +29,7 @@ public class HttpClientUtils {
 //		<constructor-arg name="connectionRequestTimeout" value="500"/>
 //		<!-- 是否进行陈旧连接检查, 如果不开启, 则启动陈旧连接关闭线程 -->
 //		<constructor-arg name="staleConnCheck" value="true"/>
-        this(1000, 500, 500, true);
+        this(2000, 2000, 2000, true);
     }
 
     /**
