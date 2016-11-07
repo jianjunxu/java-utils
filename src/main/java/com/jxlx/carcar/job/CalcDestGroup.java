@@ -57,7 +57,7 @@ public class CalcDestGroup {
         }
         MapService service = new MapService();
         // 3 批量获取经纬度 dests
-        List<PlaceResult> placeResults = service.batchGetPlaceInfo(dests);
+        List<PlaceResult> placeResults = service.batchRequestPlaceInfo(dests);
         Preconditions.checkArgument(!CollectionUtils.isEmpty(placeResults), "placeResults is empty.");
         Map<String, PlaceResult> name2place = Maps.uniqueIndex(placeResults, new Function<PlaceResult, String>() {
             @Override

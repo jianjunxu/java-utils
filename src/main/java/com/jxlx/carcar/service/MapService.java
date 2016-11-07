@@ -1,6 +1,9 @@
 package com.jxlx.carcar.service;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.jxlx.carcar.common.Constant;
@@ -15,6 +18,10 @@ import com.jxlx.carcar.utils.NetWorkURL;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.message.BasicHeader;
+import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +45,7 @@ public class MapService {
      */
     public DistanceResult getDistance(DistanceParam param) {
         Preconditions.checkNotNull(param, "DistanceParam is null.");
-        String methodURI = Constant.DISTANCE_URI;
+        String methodURI = Constant.MAP_API_HOST + Constant.DISTANCE_URI;
         Map<String, String> parameters = CarConverter.convertDistanceParam(param);
         String url = NetWorkURL.toURL(methodURI, parameters);
         String response = httpGetAccess(new HttpGet(url));
@@ -77,7 +84,7 @@ public class MapService {
      */
     public PlaceResult getPlaceInfo(PlaceParam placeParam) {
         Preconditions.checkNotNull(placeParam, "PlaceParam is null.");
-        String methodURI = Constant.SEARCH_PLACE_URI;
+        String methodURI = Constant.MAP_API_HOST + Constant.SEARCH_PLACE_URI;
         Map<String, String> parameters = CarConverter.convertPlaceParam(placeParam);
         String url = NetWorkURL.toURL(methodURI, parameters);
         String response = httpGetAccess(new HttpGet(url));
@@ -114,6 +121,31 @@ public class MapService {
     }
 
     /**
+     * http://lbs.amap.com/api/webservice/guide/api/batchrequest/
+     */
+    public List<PlaceResult> batchRequestPlaceInfo(List<PlaceParam> placeParams){
+        JSONObject params = new JSONObject();
+        JSONArray arr = new JSONArray();
+        params.put("ops",arr);
+        for (PlaceParam placeParam: placeParams){
+            Map<String, String> map = CarConverter.convertPlaceParam(placeParam);
+            String url = NetWorkURL.toURL(Constant.SEARCH_PLACE_URI, map);
+            JSONObject entity = new JSONObject();
+            entity.put("url", url);
+            arr.add(entity);
+        }
+        String response = httpPostAccess(Constant.MAP_API_HOST + Constant.BATCH_REQUEST_URI, params);
+        JSONArray resultArr = JSON.parseArray(response);
+        int size = resultArr.size();
+        List<PlaceResult> resultList = new ArrayList<PlaceResult>(size);
+        for (int i = 0; i < size; i++) {
+            JSONObject object = resultArr.getJSONObject(i);
+            JSONObject result = object.getJSONObject("body");
+            resultList.add(JSON.parseObject(JSON.toJSONString(result),PlaceResult.class));
+        }
+        return resultList;
+    }
+    /**
      * http get
      *
      * @param httpGet
@@ -133,6 +165,43 @@ public class MapService {
                 break;
             } catch (Exception e) {
                 LOGGER.error("IOException {} times.ex:{}", (i + 1), e.getMessage(), e);
+            }
+        }
+        return response;
+    }
+
+    /**
+     * http post
+     *
+     * @param url
+     * @param params
+     * @return
+     */
+    private String httpPostAccess(String url, JSONObject params) {
+        String response = "";
+        if (StringUtils.isBlank(url)) {
+            LOGGER.error("methodURI is blank.");
+            return response;
+        }
+        HttpPost httpPost = new HttpPost(url);
+        if (params != null && params.size() > 0) {
+            StringEntity entity = new StringEntity(params.toJSONString(),"UTF-8");
+            entity.setContentEncoding("UTF-8");
+            entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
+            httpPost.setEntity(entity);
+        }
+        for (int i = 0; i < 3; i++) {
+            try {
+                HttpClientUtils httpClient = new HttpClientUtils();
+                response = httpClient.executeWithLog(httpPost, new AbstractResponseHandler<String>() {
+                    @Override
+                    public String handle(HttpEntity entity) throws IOException {
+                        return EntityUtils.toString(entity);
+                    }
+                });
+                break;
+            } catch (Exception e) {
+                LOGGER.error("IOException.ex:{}", e.getMessage());
             }
         }
         return response;
