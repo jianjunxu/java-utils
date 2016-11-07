@@ -14,6 +14,7 @@ import com.jxlx.carcar.entity.result.DistanceResult;
 import com.jxlx.carcar.entity.result.PlaceResult;
 import com.jxlx.carcar.mock.MockCoordinates;
 import com.jxlx.carcar.service.MapService;
+import com.sun.org.apache.bcel.internal.generic.FDIV;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
@@ -29,6 +30,14 @@ public class CalcDestGroup {
     private static final Logger LOGGER = LoggerFactory.getLogger(CalcDestGroup.class);
 
     public static void main(String[] args) {
+        LOGGER.info("--------" + JSON.toJSONString(calTwoDistinceInfo()));
+    }
+
+    /**
+     * 计算两个目的地间的距离vs耗时
+     * @return
+     */
+    public static List<DistanceResDo> calTwoDistinceInfo(){
         // 1 init
         List<String> descList = MockCoordinates.initDesc();
         Preconditions.checkArgument(!CollectionUtils.isEmpty(descList), "init data empty.");
@@ -84,7 +93,7 @@ public class CalcDestGroup {
                 return param;
             }
         });
-        List<DistanceResult> resultList = service.batchGetDistance(distanceParams);
+        List<DistanceResult> resultList = service.batchRequestDistance(distanceParams);
         List<DistanceResDo> dos = Lists.transform(resultList, new Function<DistanceResult, DistanceResDo>() {
             @Override
             public DistanceResDo apply(DistanceResult input) {
@@ -96,6 +105,6 @@ public class CalcDestGroup {
                 return resDo;
             }
         });
-        LOGGER.info("--------" + JSON.toJSONString(dos));
+        return dos;
     }
 }

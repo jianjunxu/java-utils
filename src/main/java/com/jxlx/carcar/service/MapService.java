@@ -76,6 +76,54 @@ public class MapService {
         return resultList;
     }
 
+    public List<DistanceResult> batchRequestDistance(List<DistanceParam> distanceParams) {
+        List<DistanceResult> resultList = Lists.newArrayList();
+        int size = distanceParams.size();
+        List<DistanceParam> params = Lists.newArrayList();
+        for (int i = 0; i < size; i++) {
+            params.add(distanceParams.get(i));
+            if (i > 0 && (i % 20 == 0 || i == size - 1)) {
+                resultList.addAll(batchDistance(params));
+                params.clear();
+            }
+        }
+        return resultList;
+    }
+
+    /**
+     * 每次最多20个子查询
+     *
+     * @param distanceParams
+     * @return
+     */
+    public List<DistanceResult> batchDistance(List<DistanceParam> distanceParams) {
+        JSONObject params = new JSONObject();
+        JSONArray arr = new JSONArray();
+        params.put("ops", arr);
+        for (DistanceParam distanceParam : distanceParams) {
+            Map<String, String> map = CarConverter.convertDistanceParam(distanceParam);
+            String url = NetWorkURL.toURL(Constant.DISTANCE_URI, map);
+            JSONObject entity = new JSONObject();
+            entity.put("url", url);
+            arr.add(entity);
+        }
+        String response = httpPostAccess(Constant.MAP_API_HOST + Constant.BATCH_REQUEST_URI, params);
+        JSONArray resultArr = JSON.parseArray(response);
+        int size = resultArr.size();
+        List<DistanceResult> resultList = new ArrayList<DistanceResult>(size);
+        for (int i = 0; i < size; i++) {
+            JSONObject object = resultArr.getJSONObject(i);
+            JSONObject result = object.getJSONObject("body");
+            resultList.add(JSON.parseObject(JSON.toJSONString(result), DistanceResult.class));
+        }
+        LOGGER.info(JSON.toJSONString(resultList));
+        for (int i = 0; i < resultList.size(); i++) {
+            resultList.get(i).setOriId(distanceParams.get(i).getOriId());
+            resultList.get(i).setDestId(distanceParams.get(i).getDestId());
+        }
+        return resultList;
+    }
+
     /**
      * 根据关键字获取位置信息，经纬度等信息
      *
@@ -123,11 +171,11 @@ public class MapService {
     /**
      * http://lbs.amap.com/api/webservice/guide/api/batchrequest/
      */
-    public List<PlaceResult> batchRequestPlaceInfo(List<PlaceParam> placeParams){
+    public List<PlaceResult> batchRequestPlaceInfo(List<PlaceParam> placeParams) {
         JSONObject params = new JSONObject();
         JSONArray arr = new JSONArray();
-        params.put("ops",arr);
-        for (PlaceParam placeParam: placeParams){
+        params.put("ops", arr);
+        for (PlaceParam placeParam : placeParams) {
             Map<String, String> map = CarConverter.convertPlaceParam(placeParam);
             String url = NetWorkURL.toURL(Constant.SEARCH_PLACE_URI, map);
             JSONObject entity = new JSONObject();
@@ -141,10 +189,15 @@ public class MapService {
         for (int i = 0; i < size; i++) {
             JSONObject object = resultArr.getJSONObject(i);
             JSONObject result = object.getJSONObject("body");
-            resultList.add(JSON.parseObject(JSON.toJSONString(result),PlaceResult.class));
+            resultList.add(JSON.parseObject(JSON.toJSONString(result), PlaceResult.class));
+        }
+        LOGGER.info(JSON.toJSONString(resultList));
+        for (int i = 0; i < resultList.size(); i++) {
+            resultList.get(i).setPlaceId(placeParams.get(i).getPlaceId());
         }
         return resultList;
     }
+
     /**
      * http get
      *
