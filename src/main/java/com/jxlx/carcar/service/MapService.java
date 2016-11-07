@@ -185,7 +185,7 @@ public class MapService {
         }
         HttpPost httpPost = new HttpPost(url);
         if (params != null && params.size() > 0) {
-            StringEntity entity = new StringEntity(params.toJSONString(),"UTF-8");
+            StringEntity entity = new StringEntity(params.toJSONString(), Charsets.UTF_8);
             entity.setContentEncoding("UTF-8");
             entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
             httpPost.setEntity(entity);
@@ -196,7 +196,7 @@ public class MapService {
                 response = httpClient.executeWithLog(httpPost, new AbstractResponseHandler<String>() {
                     @Override
                     public String handle(HttpEntity entity) throws IOException {
-                        return EntityUtils.toString(entity);
+                        return EntityUtils.toString(entity, Charsets.UTF_8);
                     }
                 });
                 break;
