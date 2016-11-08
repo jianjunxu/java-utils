@@ -14,8 +14,10 @@ import com.jxlx.carcar.entity.DistancePointsInfo;
 import com.jxlx.carcar.entity.DistanceResDo;
 import com.jxlx.carcar.entity.DistanceTransferResDo;
 import com.jxlx.carcar.entity.PositionDo;
+import com.jxlx.carcar.entity.params.DirectionParam;
 import com.jxlx.carcar.entity.params.DistanceParam;
 import com.jxlx.carcar.entity.params.PlaceParam;
+import com.jxlx.carcar.entity.result.DirectionResult;
 import com.jxlx.carcar.entity.result.DistanceResult;
 import com.jxlx.carcar.entity.result.PlaceResult;
 import com.jxlx.carcar.mock.MockCoordinates;
@@ -36,14 +38,6 @@ import java.util.concurrent.TimeUnit;
 public class CalcDestGroup {
     private static final Logger LOGGER = LoggerFactory.getLogger(CalcDestGroup.class);
 
-    static LoadingCache<String, DistancePointsInfo> cache = CacheBuilder.newBuilder().maximumSize(1000)
-            .expireAfterWrite(5, TimeUnit.MINUTES).ticker(Ticker.systemTicker())
-            .build(new CacheLoader<String, DistancePointsInfo>() {
-                @Override
-                public DistancePointsInfo load(String key) throws Exception {
-                    return null;
-                }
-            });
 
     public static void main(String[] args) {
         distanceTransfer();
@@ -85,6 +79,8 @@ public class CalcDestGroup {
             resDo.setDestId(input.getDestId());
             resDo.setDistance(input.getResults().get(0).getDistance());
             resDo.setDuration(input.getResults().get(0).getDuration());
+            resDo.setOriLocation(input.getOriLocation());
+            resDo.setDestLocation(input.getDestLocation());
             dos.add(resDo);
             //2
             DistanceResDo resDo2 = new DistanceResDo();
@@ -92,6 +88,8 @@ public class CalcDestGroup {
             resDo2.setDestId(input.getOriId());
             resDo2.setDistance(input.getResults().get(0).getDistance());
             resDo2.setDuration(input.getResults().get(0).getDuration());
+            resDo2.setOriLocation(input.getOriLocation());
+            resDo2.setDestLocation(input.getDestLocation());
             dos.add(resDo2);
         }
 //        List<DistanceResDo> dos = Lists.transform(resultList, new Function<DistanceResult, DistanceResDo>() {
@@ -135,21 +133,40 @@ public class CalcDestGroup {
             }
         });
         destIds.remove(startId); // 去掉起点
+        List<DirectionParam> params = Lists.newArrayList();
         for (int i = 0; i < destIds.size(); i++) { //一个目的地
             String iKey = startId + "-" + destIds.get(i);
             DistanceResDo iDo = ids2resDo.get(iKey);
             for (int j = i + 1; j < destIds.size(); j++) { //另一个目的地
                 String jKey = startId + "-" + destIds.get(j);
                 DistanceResDo jDo = ids2resDo.get(jKey);
-                //TODO 准备参数
+                DirectionParam directionParam = new DirectionParam();
+                directionParam.setKey(Constant.KEY_CAR_LINE);
                 if (Long.valueOf(iDo.getDistance()) > Long.valueOf(jDo.getDistance())) { // 判断起始点去哪个目的地远
-                    LOGGER.info("1---" + JSON.toJSONString(iDo) + JSON.toJSONString(jDo));
+                    directionParam.setOrigin(iDo.getOriLocation());
+                    directionParam.setDestination(iDo.getDestLocation());
+                    directionParam.setWaypoints(jDo.getDestLocation());
+                    directionParam.setOriginId(iDo.getOriId());
+                    directionParam.setDestId(iDo.getDestId());
+                    directionParam.setWaypointsId(jDo.getDestId());
                 } else {
-                    LOGGER.info("2---" + JSON.toJSONString(iDo) + JSON.toJSONString(jDo));
+                    directionParam.setOrigin(jDo.getOriLocation());
+                    directionParam.setDestination(jDo.getDestLocation());
+                    directionParam.setWaypoints(iDo.getDestLocation());
+                    directionParam.setOriginId(jDo.getOriId());
+                    directionParam.setDestId(jDo.getDestId());
+                    directionParam.setWaypointsId(iDo.getDestId());
                 }
+                params.add(directionParam);
             }
         }
+        MapService service = new MapService();
+        List<DirectionResult> resultList = service.batchDrivingDirection(params);
+        for (DirectionResult param : resultList) {
+            LOGGER.info("~~~~~~~" + JSON.toJSONString(param));
+        }
         /** 2.2 两个中转点 */
+        /** 3 convert */
         return null;
     }
 

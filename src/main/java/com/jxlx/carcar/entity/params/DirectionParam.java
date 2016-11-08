@@ -32,6 +32,10 @@ public class DirectionParam extends BaseParam {
      */
     private String waypoints;
 
+    private String originId;
+    private String destId;
+    private String waypointsId;
+
     public String getOrigin() {
         return origin;
     }
@@ -62,5 +66,29 @@ public class DirectionParam extends BaseParam {
 
     public void setWaypoints(String waypoints) {
         this.waypoints = waypoints;
+    }
+
+    public String getOriginId() {
+        return originId;
+    }
+
+    public void setOriginId(String originId) {
+        this.originId = originId;
+    }
+
+    public String getDestId() {
+        return destId;
+    }
+
+    public void setDestId(String destId) {
+        this.destId = destId;
+    }
+
+    public String getWaypointsId() {
+        return waypointsId;
+    }
+
+    public void setWaypointsId(String waypointsId) {
+        this.waypointsId = waypointsId;
     }
 }

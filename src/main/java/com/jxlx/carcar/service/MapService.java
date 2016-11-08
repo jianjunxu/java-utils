@@ -130,7 +130,9 @@ public class MapService {
         LOGGER.info(JSON.toJSONString(resultList));
         for (int i = 0; i < resultList.size(); i++) {
             resultList.get(i).setOriId(distanceParams.get(i).getOriId());
+            resultList.get(i).setOriLocation(distanceParams.get(i).getOrigins());
             resultList.get(i).setDestId(distanceParams.get(i).getDestId());
+            resultList.get(i).setDestLocation(distanceParams.get(i).getDestination());
         }
         return resultList;
     }
@@ -230,7 +232,23 @@ public class MapService {
             LOGGER.info("JSON.parseObject error.response:{}", JSON.toJSONString(response));
             return null;
         }
+        result.setOriginId(directionParam.getOriginId());
+        result.setDestId(directionParam.getDestId());
+        result.setWaypointsId(directionParam.getWaypointsId());
+
         return result;
+    }
+
+    /**
+     * 批量
+     */
+    public List<DirectionResult>  batchDrivingDirection(List<DirectionParam> params){
+        List<DirectionResult> resultList = Lists.newArrayList();
+        for (DirectionParam param:params){
+            DirectionResult result = drivingDirection(param);
+            resultList.add(result);
+        }
+        return resultList;
     }
 
     /**
@@ -297,12 +315,12 @@ public class MapService {
 
     public static void main(String[] args) {
         MapService server = new MapService();
-        DistanceParam param = new DistanceParam();
-        param.setKey(Constant.KEY_CAR_LINE);
-        param.setOrigins("116.357483,39.907234");
-        param.setDestination("116.434446,39.90816");
-        DistanceResult result = server.getDistance(param);
-        LOGGER.info("------result:" + JSON.toJSONString(result));
+//        DistanceParam param = new DistanceParam();
+//        param.setKey(Constant.KEY_CAR_LINE);
+//        param.setOrigins("116.357483,39.907234");
+//        param.setDestination("116.434446,39.90816");
+//        DistanceResult result = server.getDistance(param);
+//        LOGGER.info("------result:" + JSON.toJSONString(result));
 
 //        PlaceParam placeParam = new PlaceParam();
 //        placeParam.setKey(Constant.KEY_CAR_LINE);
@@ -314,12 +332,12 @@ public class MapService {
 //        String location = "116.506218,40.006226";
 //        LOGGER.info("id-----" + location.hashCode());
 
-//        DirectionParam directionParam = new DirectionParam();
-//        directionParam.setKey(Constant.KEY_CAR_LINE);
-//        directionParam.setOrigin("116.481028,39.989643");
-//        directionParam.setDestination("116.434446,39.90816");
-//        directionParam.setWaypoints("116.357483,39.907234");
-//        DirectionResult result = server.drivingDirection(directionParam);
-//        LOGGER.info("------DirectionResult:{}", JSON.toJSONString(result));
+        DirectionParam directionParam = new DirectionParam();
+        directionParam.setKey(Constant.KEY_CAR_LINE);
+        directionParam.setOrigin("116.481028,39.989643");
+        directionParam.setDestination("116.434446,39.90816");
+        directionParam.setWaypoints("116.357483,39.907234");
+        DirectionResult result = server.drivingDirection(directionParam);
+        LOGGER.info("------DirectionResult:{}", JSON.toJSONString(result));
     }
 }

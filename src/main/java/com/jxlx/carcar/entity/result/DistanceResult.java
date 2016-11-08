@@ -25,8 +25,10 @@ public class DistanceResult extends BaseResult {
     List<DistanceDo> results;
     /** 出发地 */
     private String oriId;
+    private String oriLocation;
     /** 目的地 */
     private String destId;
+    private String destLocation;
 
     public List<DistanceDo> getResults() {
         return results;
@@ -50,5 +52,21 @@ public class DistanceResult extends BaseResult {
 
     public void setDestId(String destId) {
         this.destId = destId;
+    }
+
+    public String getOriLocation() {
+        return oriLocation;
+    }
+
+    public void setOriLocation(String oriLocation) {
+        this.oriLocation = oriLocation;
+    }
+
+    public String getDestLocation() {
+        return destLocation;
+    }
+
+    public void setDestLocation(String destLocation) {
+        this.destLocation = destLocation;
     }
 }

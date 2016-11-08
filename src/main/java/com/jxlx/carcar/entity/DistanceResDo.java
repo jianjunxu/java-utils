@@ -11,6 +11,8 @@ public class DistanceResDo implements Serializable {
     private String destId;
     private String distance;
     private String duration;
+    private String oriLocation;
+    private String destLocation;
 
     public String getOriId() {
         return oriId;
@@ -42,5 +44,21 @@ public class DistanceResDo implements Serializable {
 
     public void setDuration(String duration) {
         this.duration = duration;
+    }
+
+    public String getOriLocation() {
+        return oriLocation;
+    }
+
+    public void setOriLocation(String oriLocation) {
+        this.oriLocation = oriLocation;
+    }
+
+    public String getDestLocation() {
+        return destLocation;
+    }
+
+    public void setDestLocation(String destLocation) {
+        this.destLocation = destLocation;
     }
 }
