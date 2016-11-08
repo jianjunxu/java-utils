@@ -116,6 +116,8 @@ public class MapService {
             entity.put("url", url);
             arr.add(entity);
         }
+        LOGGER.info("url:" + Constant.MAP_API_HOST + Constant.BATCH_REQUEST_URI);
+        LOGGER.info("params:"+JSON.toJSONString(params));
         String response = httpPostAccess(Constant.MAP_API_HOST + Constant.BATCH_REQUEST_URI, params);
         JSONArray resultArr = JSON.parseArray(response);
         int size = resultArr.size();

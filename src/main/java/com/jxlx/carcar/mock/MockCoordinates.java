@@ -2,6 +2,7 @@ package com.jxlx.carcar.mock;
 
 import com.google.common.collect.Lists;
 import com.jxlx.carcar.entity.Coordinates;
+import com.jxlx.carcar.entity.PositionDo;
 
 import java.util.List;
 import java.util.Map;
@@ -48,5 +49,19 @@ public class MockCoordinates {
 
     public static String initDistanceTransfer() {
         return "1000,北京,北京首都国际机场";
+    }
+
+    public static List<PositionDo> initPosition(){
+        return Lists.newArrayList(
+                new PositionDo("1001", "北京", "望京SOHO", "116.480665,39.996404"),
+                new PositionDo("1002", "北京", "天安门", "116.397477,39.908692"),
+                new PositionDo("1003", "北京", "故宫", "116.397026,39.918058"),
+                new PositionDo("1004", "北京", "天坛", "116.410886,39.881949"),
+                new PositionDo("1005", "北京", "奥林匹克森林公园", "116.394548,40.015022"),
+                new PositionDo("1006", "北京", "长城", "116.016802,40.356188"),
+                new PositionDo("1007", "北京", "鸟巢", "116.395946,39.993427"),
+                new PositionDo("1008", "北京", "水立方", "116.390395,39.992856"),
+                new PositionDo("1000", "北京", "北京首都国际机场", "116.587922,40.081577")
+        );
     }
 }
