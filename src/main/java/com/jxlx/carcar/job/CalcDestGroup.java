@@ -30,16 +30,18 @@ public class CalcDestGroup {
     private static final Logger LOGGER = LoggerFactory.getLogger(CalcDestGroup.class);
 
     public static void main(String[] args) {
-        LOGGER.info("--------" + JSON.toJSONString(calTwoDistinceInfo()));
+        distanceTransfer();
+//        List<String> descList = MockCoordinates.initDistance();
+//        LOGGER.info("--------" + JSON.toJSONString(calTwoDistinceInfo(descList)));
     }
 
     /**
      * 计算两个目的地间的距离vs耗时
+     *
      * @return
      */
-    public static List<DistanceResDo> calTwoDistinceInfo(){
+    public static List<DistanceResDo> calTwoDistinceInfo(List<String> descList) {
         // 1 init
-        List<String> descList = MockCoordinates.initDistance();
         Preconditions.checkArgument(!CollectionUtils.isEmpty(descList), "init data empty.");
         // 2 packaging required params
         final List<DistancePointsInfo> infos = Lists.newArrayList();
@@ -74,7 +76,7 @@ public class CalcDestGroup {
                 return input.getPlaceId();
             }
         });
-        for (DistancePointsInfo info :infos) {
+        for (DistancePointsInfo info : infos) {
             PlaceResult oriPlace = name2place.get(info.getOriId());
             PlaceResult destPlace = name2place.get(info.getDestId());
             info.setOriLocation(oriPlace.getPois().get(0).getLocation());
@@ -113,7 +115,41 @@ public class CalcDestGroup {
      *
      * @return
      */
-    public static List<DistanceTransferResDo> distanceTransfer(){
+    public static List<DistanceTransferResDo> distanceTransfer() {
+        /** 1 初始数据准备 */
+        /** 1.1 原始数据 */
+        String startPoint = MockCoordinates.initDistanceTransfer();
+        List<String> destList = MockCoordinates.initDistance();
+        List<String> all = Lists.newArrayList();
+        all.addAll(destList);
+        all.add(startPoint);
+        /** 1.2 距离数据 *之后做比较用 */
+        List<DistanceResDo> distanceResDos = calTwoDistinceInfo(all);
+        Map<String, Map<String, DistanceResDo>> dist2dist2do = Maps.newHashMap();
+        for (DistanceResDo distanceResDo : distanceResDos) {
+            Map<String, DistanceResDo> distOri2do = dist2dist2do.get(distanceResDo.getOriId());
+            if (CollectionUtils.isEmpty(distOri2do)) {
+                distOri2do = Maps.newHashMap();
+                dist2dist2do.put(distanceResDo.getOriId(), distOri2do);
+            }
+            distOri2do.put(distanceResDo.getDestId(), distanceResDo);
+
+            Map<String, DistanceResDo> distDest2do = dist2dist2do.get(distanceResDo.getDestId());
+            if (CollectionUtils.isEmpty(distDest2do)) {
+                distDest2do = Maps.newHashMap();
+                dist2dist2do.put(distanceResDo.getDestId(), distDest2do);
+            }
+            distDest2do.put(distanceResDo.getOriId(), distanceResDo);
+        }
+        /** 2 组合目的地 */
+        /** 2.1 一个中转点 起点为 1000,北京,北京首都国际机场 */
+        for (int i = 0; i < destList.size(); i++) { //选作中转点
+            for (int j = i+1;j<destList.size(); j++){ //选作终点
+
+            }
+        }
+        /** 2.2 两个中转点 */
+
         return null;
     }
 }

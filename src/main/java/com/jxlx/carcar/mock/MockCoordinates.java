@@ -46,9 +46,7 @@ public class MockCoordinates {
                 "1008,北京,水立方");
     }
 
-    public static List<String> initDistanceTransfer() {
-        return Lists.newArrayList(
-                "1000,北京,北京首都国际机场"
-        );
+    public static String initDistanceTransfer() {
+        return "1000,北京,北京首都国际机场";
     }
 }
