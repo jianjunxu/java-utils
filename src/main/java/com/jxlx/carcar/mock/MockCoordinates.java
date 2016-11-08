@@ -34,7 +34,7 @@ public class MockCoordinates {
         return list;
     }
 
-    public static List<String> initDesc() {
+    public static List<String> initDistance() {
         return Lists.newArrayList(
                 "1001,北京,望京SOHO",
                 "1002,北京,天安门",
@@ -43,7 +43,12 @@ public class MockCoordinates {
                 "1005,北京,奥林匹克森林公园",
                 "1006,北京,长城",
                 "1007,北京,鸟巢",
-                "1008,北京,水立方",
-                "1009,北京,北京首都国际机场");
+                "1008,北京,水立方");
+    }
+
+    public static List<String> initDistanceTransfer() {
+        return Lists.newArrayList(
+                "1000,北京,北京首都国际机场"
+        );
     }
 }

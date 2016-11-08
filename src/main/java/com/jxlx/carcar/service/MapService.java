@@ -8,8 +8,10 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.jxlx.carcar.common.Constant;
 import com.jxlx.carcar.convert.CarConverter;
+import com.jxlx.carcar.entity.params.DirectionParam;
 import com.jxlx.carcar.entity.params.DistanceParam;
 import com.jxlx.carcar.entity.params.PlaceParam;
+import com.jxlx.carcar.entity.result.DirectionResult;
 import com.jxlx.carcar.entity.result.DistanceResult;
 import com.jxlx.carcar.entity.result.PlaceResult;
 import com.jxlx.carcar.utils.AbstractResponseHandler;
@@ -39,6 +41,7 @@ public class MapService {
 
     /**
      * 距离测量
+     * TODO 需改进批量查询 http://lbs.amap.com/api/webservice/guide/api/direction/#distance
      *
      * @param param
      * @return eg.http://restapi.amap.com/v3/distance?origins=116.506218%2C40.006226&key=d90b58069d86d84624d73a098e7b4383&destination=116.480665%2C39.996404
@@ -63,6 +66,12 @@ public class MapService {
         return result;
     }
 
+    /**
+     * 批量查两个位置距离
+     *
+     * @param params
+     * @return
+     */
     public List<DistanceResult> batchGetDistance(List<DistanceParam> params) {
         List<DistanceResult> resultList = Lists.newArrayList();
         for (DistanceParam param : params) {
@@ -91,7 +100,7 @@ public class MapService {
     }
 
     /**
-     * 每次最多20个子查询
+     * 批量距离查询 每次最多20个子查询
      *
      * @param distanceParams
      * @return
@@ -150,7 +159,7 @@ public class MapService {
     }
 
     /**
-     * 批量 TODO 后改进
+     * 批量 获取位置信息
      *
      * @param placeParams
      * @return
@@ -169,6 +178,8 @@ public class MapService {
     }
 
     /**
+     * 批量获取位置信息 限制20个目的地
+     *
      * http://lbs.amap.com/api/webservice/guide/api/batchrequest/
      */
     public List<PlaceResult> batchRequestPlaceInfo(List<PlaceParam> placeParams) {
@@ -196,6 +207,28 @@ public class MapService {
             resultList.get(i).setPlaceId(placeParams.get(i).getPlaceId());
         }
         return resultList;
+    }
+
+    /**
+     * 驾车规划API服务地址
+     * http://lbs.amap.com/api/webservice/guide/api/direction/#driving
+     */
+    public DirectionResult drivingDirection(DirectionParam directionParam){
+        Preconditions.checkNotNull(directionParam, "DirectionParam is null.");
+        String methodURI = Constant.MAP_API_HOST + Constant.DRIVING_DIRECTION;
+        Map<String, String> parameters = CarConverter.convertDirectionParam(directionParam);
+        String url = NetWorkURL.toURL(methodURI, parameters);
+        String response = httpGetAccess(new HttpGet(url));
+        if (StringUtils.isBlank(response)) {
+            LOGGER.info("response is blank.placeParam:{}", JSON.toJSONString(directionParam));
+            return null;
+        }
+        DirectionResult result = JSON.parseObject(response, DirectionResult.class);
+        if (result == null) {
+            LOGGER.info("JSON.parseObject error.response:{}", JSON.toJSONString(response));
+            return null;
+        }
+        return result;
     }
 
     /**
@@ -261,13 +294,13 @@ public class MapService {
     }
 
     public static void main(String[] args) {
-//        MapService server = new MapService();
-//        DistanceParam param = new DistanceParam();
-//        param.setKey(Constant.KEY_CAR_LINE);
-//        param.setOrigins("116.506218,40.006226");
-//        param.setDestination("116.480665,39.996404");
-//        DistanceResult result = server.getDistance(param);
-//        LOGGER.info("------result:" + JSON.toJSONString(result));
+        MapService server = new MapService();
+        DistanceParam param = new DistanceParam();
+        param.setKey(Constant.KEY_CAR_LINE);
+        param.setOrigins("116.357483,39.907234");
+        param.setDestination("116.434446,39.90816");
+        DistanceResult result = server.getDistance(param);
+        LOGGER.info("------result:" + JSON.toJSONString(result));
 
 //        PlaceParam placeParam = new PlaceParam();
 //        placeParam.setKey(Constant.KEY_CAR_LINE);
@@ -276,7 +309,15 @@ public class MapService {
 //        PlaceResult placeResult = server.getPlaceInfo(placeParam);
 //        LOGGER.info("------placeResult:" + JSON.toJSONString(placeResult));
 
-        String location = "116.506218,40.006226";
-        LOGGER.info("id-----" + location.hashCode());
+//        String location = "116.506218,40.006226";
+//        LOGGER.info("id-----" + location.hashCode());
+
+//        DirectionParam directionParam = new DirectionParam();
+//        directionParam.setKey(Constant.KEY_CAR_LINE);
+//        directionParam.setOrigin("116.481028,39.989643");
+//        directionParam.setDestination("116.434446,39.90816");
+//        directionParam.setWaypoints("116.357483,39.907234");
+//        DirectionResult result = server.drivingDirection(directionParam);
+//        LOGGER.info("------DirectionResult:{}", JSON.toJSONString(result));
     }
 }

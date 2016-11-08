@@ -14,4 +14,6 @@ public interface Constant {
     String SEARCH_PLACE_URI = "/v3/place/text";
     /** 批量请求接口 */
     String BATCH_REQUEST_URI = "/v3/batch";
+    /** 驾车路径规划 */
+    String DRIVING_DIRECTION = "/v3/direction/driving";
 }

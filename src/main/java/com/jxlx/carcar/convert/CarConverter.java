@@ -1,6 +1,7 @@
 package com.jxlx.carcar.convert;
 
 import com.google.common.collect.Maps;
+import com.jxlx.carcar.entity.params.DirectionParam;
 import com.jxlx.carcar.entity.params.DistanceParam;
 import com.jxlx.carcar.entity.params.PlaceParam;
 import org.apache.commons.beanutils.BeanUtils;
@@ -27,6 +28,16 @@ public class CarConverter {
         resMap.put("offset", String.valueOf(placeParam.getOffset()));
         resMap.put("page", String.valueOf(placeParam.getPage()));
         resMap.put("citylimit", String.valueOf(placeParam.isCitylimit()));
+        return resMap;
+    }
+
+    public static Map<String, String> convertDirectionParam(DirectionParam directionParam){
+        Map<String, String> resMap = Maps.newHashMap();
+        resMap.put("key", directionParam.getKey());
+        resMap.put("origin", directionParam.getOrigin());
+        resMap.put("destination", directionParam.getDestination());
+        resMap.put("strategy", String.valueOf(directionParam.getStrategy()));
+        resMap.put("waypoints", String.valueOf(directionParam.getWaypoints()));
         return resMap;
     }
 }

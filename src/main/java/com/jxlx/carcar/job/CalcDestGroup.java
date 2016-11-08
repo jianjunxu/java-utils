@@ -8,13 +8,13 @@ import com.google.common.collect.Maps;
 import com.jxlx.carcar.common.Constant;
 import com.jxlx.carcar.entity.DistancePointsInfo;
 import com.jxlx.carcar.entity.DistanceResDo;
+import com.jxlx.carcar.entity.DistanceTransferResDo;
 import com.jxlx.carcar.entity.params.DistanceParam;
 import com.jxlx.carcar.entity.params.PlaceParam;
 import com.jxlx.carcar.entity.result.DistanceResult;
 import com.jxlx.carcar.entity.result.PlaceResult;
 import com.jxlx.carcar.mock.MockCoordinates;
 import com.jxlx.carcar.service.MapService;
-import com.sun.org.apache.bcel.internal.generic.FDIV;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
@@ -39,7 +39,7 @@ public class CalcDestGroup {
      */
     public static List<DistanceResDo> calTwoDistinceInfo(){
         // 1 init
-        List<String> descList = MockCoordinates.initDesc();
+        List<String> descList = MockCoordinates.initDistance();
         Preconditions.checkArgument(!CollectionUtils.isEmpty(descList), "init data empty.");
         // 2 packaging required params
         final List<DistancePointsInfo> infos = Lists.newArrayList();
@@ -106,5 +106,14 @@ public class CalcDestGroup {
             }
         });
         return dos;
+    }
+
+    /**
+     * 中转目的地
+     *
+     * @return
+     */
+    public static List<DistanceTransferResDo> distanceTransfer(){
+        return null;
     }
 }
