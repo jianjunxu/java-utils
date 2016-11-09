@@ -3,10 +3,6 @@ package com.jxlx.carcar.job;
 import com.alibaba.fastjson.JSON;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
-import com.google.common.base.Ticker;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.jxlx.carcar.common.Constant;
@@ -29,7 +25,8 @@ import org.springframework.util.CollectionUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
+
+import static java.awt.SystemColor.info;
 
 
 /**
@@ -73,6 +70,7 @@ public class CalcDestGroup {
         List<DistanceResDo> dos = new ArrayList<DistanceResDo>();
         for (int i = 0; i < resultList.size(); i++) {
             DistanceResult input = resultList.get(i);
+            /** 两点位置信息互换记录 */
             //1
             DistanceResDo resDo = new DistanceResDo();
             resDo.setOriId(input.getOriId());
@@ -88,8 +86,8 @@ public class CalcDestGroup {
             resDo2.setDestId(input.getOriId());
             resDo2.setDistance(input.getResults().get(0).getDistance());
             resDo2.setDuration(input.getResults().get(0).getDuration());
-            resDo2.setOriLocation(input.getOriLocation());
-            resDo2.setDestLocation(input.getDestLocation());
+            resDo2.setOriLocation(input.getDestLocation());
+            resDo2.setDestLocation(input.getOriLocation());
             dos.add(resDo2);
         }
 //        List<DistanceResDo> dos = Lists.transform(resultList, new Function<DistanceResult, DistanceResDo>() {
@@ -118,6 +116,7 @@ public class CalcDestGroup {
         /** 1.2 距离数据 *之后做比较用 */
         List<DistanceResDo> distanceResDos = calTwoDistinceInfo(initData);
         Map<String, DistanceResDo> ids2resDo = Maps.newHashMap();
+        /** key对应两点距离信息 key为oriId-destId */
         for (DistanceResDo distanceResDo : distanceResDos) {
             String key = distanceResDo.getOriId() + "-" + distanceResDo.getDestId();
             ids2resDo.put(key, distanceResDo);
@@ -136,20 +135,25 @@ public class CalcDestGroup {
         List<DirectionParam> params = Lists.newArrayList();
         for (int i = 0; i < destIds.size(); i++) { //一个目的地
             String iKey = startId + "-" + destIds.get(i);
+            /** 机场到目的地i */
             DistanceResDo iDo = ids2resDo.get(iKey);
             for (int j = i + 1; j < destIds.size(); j++) { //另一个目的地
                 String jKey = startId + "-" + destIds.get(j);
+                /** 机场到目的地j */
                 DistanceResDo jDo = ids2resDo.get(jKey);
+                /** 中转路线参数准备 */
                 DirectionParam directionParam = new DirectionParam();
                 directionParam.setKey(Constant.KEY_CAR_LINE);
                 if (Long.valueOf(iDo.getDistance()) > Long.valueOf(jDo.getDistance())) { // 判断起始点去哪个目的地远
-                    directionParam.setOrigin(iDo.getOriLocation());
-                    directionParam.setDestination(iDo.getDestLocation());
-                    directionParam.setWaypoints(jDo.getDestLocation());
+                    /** 目的地i距离远 */
+                    directionParam.setOrigin(iDo.getOriLocation());//起点为start
+                    directionParam.setDestination(iDo.getDestLocation()); // 目的地为i的地点
+                    directionParam.setWaypoints(jDo.getDestLocation());//中转点为j目的地
                     directionParam.setOriginId(iDo.getOriId());
                     directionParam.setDestId(iDo.getDestId());
                     directionParam.setWaypointsId(jDo.getDestId());
                 } else {
+                    /** 目的地j距离远 */
                     directionParam.setOrigin(jDo.getOriLocation());
                     directionParam.setDestination(jDo.getDestLocation());
                     directionParam.setWaypoints(iDo.getDestLocation());
@@ -172,7 +176,7 @@ public class CalcDestGroup {
 
     /**
      * 获取目的地经纬度
-     *
+     * 之后要存一张位置信息表把各个目的地的经纬度等信息保存下来，就不用每次都去高德查
      * @param pdoList 目的地信息
      * @return
      */
@@ -181,12 +185,14 @@ public class CalcDestGroup {
         List<PlaceParam> dests = Lists.newArrayList();
         int totalSize = pdoList.size();
         for (int i = 0; i < totalSize; i++) {
+            /** 经纬度信息参数 */
             PositionDo iDest = pdoList.get(i);
             PlaceParam placeParam = new PlaceParam();
             placeParam.setPlaceId(iDest.getPid());
             placeParam.setCity(iDest.getPcity());
             placeParam.setKeywords(iDest.getPname());
             dests.add(placeParam);
+            /** 组合需要计算的目的地距离（两两组合,只记一次） */
             for (int j = i + 1; j < totalSize; j++) {
                 DistancePointsInfo info = new DistancePointsInfo();
                 PositionDo jDest = pdoList.get(j);
@@ -202,6 +208,10 @@ public class CalcDestGroup {
         MapService service = new MapService();
         // 3 批量获取经纬度 dests
         List<PlaceResult> placeResults = service.batchRequestPlaceInfo(dests);
+        for (PlaceResult rs:placeResults){
+
+            LOGGER.info("data:{}", JSON.toJSONString(rs));
+        }
         Preconditions.checkArgument(!CollectionUtils.isEmpty(placeResults), "placeResults is empty.");
         Map<String, PlaceResult> pid2place = Maps.uniqueIndex(placeResults, new Function<PlaceResult, String>() {
             @Override
@@ -209,6 +219,7 @@ public class CalcDestGroup {
                 return input.getPlaceId();
             }
         });
+        /** 赋值经纬度 */
         for (DistancePointsInfo info : infos) {
             PlaceResult oriPlace = pid2place.get(info.getOriId());
             PlaceResult destPlace = pid2place.get(info.getDestId());
