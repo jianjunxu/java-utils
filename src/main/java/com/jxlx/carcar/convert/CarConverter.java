@@ -1,10 +1,11 @@
 package com.jxlx.carcar.convert;
 
 import com.google.common.collect.Maps;
+import com.jxlx.carcar.entity.DistanceTransferResDo;
 import com.jxlx.carcar.entity.params.DirectionParam;
 import com.jxlx.carcar.entity.params.DistanceParam;
 import com.jxlx.carcar.entity.params.PlaceParam;
-import org.apache.commons.beanutils.BeanUtils;
+import com.jxlx.carcar.entity.result.DirectionResult;
 
 import java.util.Map;
 
@@ -39,5 +40,15 @@ public class CarConverter {
         resMap.put("strategy", String.valueOf(directionParam.getStrategy()));
         resMap.put("waypoints", String.valueOf(directionParam.getWaypoints()));
         return resMap;
+    }
+
+    public static DistanceTransferResDo convertTransferDo(DirectionResult result){
+        DistanceTransferResDo resDo = new DistanceTransferResDo();
+        resDo.setOriId(result.getOriginId());
+        resDo.setDestId(result.getDestId());
+        resDo.setTransferId(result.getWaypointsId());
+        resDo.setDistance(result.getRoute().get(0).getPaths().get(0).getDistance());
+        resDo.setDuration(result.getRoute().get(0).getPaths().get(0).getDuration());
+        return resDo;
     }
 }

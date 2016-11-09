@@ -5,7 +5,6 @@ import com.jxlx.carcar.entity.Coordinates;
 import com.jxlx.carcar.entity.PositionDo;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by jayden on 16/11/4.
@@ -63,5 +62,9 @@ public class MockCoordinates {
                 new PositionDo("1008", "北京", "水立方", "116.390395,39.992856"),
                 new PositionDo("1000", "北京", "北京首都国际机场", "116.587922,40.081577")
         );
+    }
+
+    public static List<String> initQueryData(){
+        return Lists.newArrayList("1001", "1002", "1003", "1005");
     }
 }

@@ -9,10 +9,8 @@ public class DistanceTransferResDo implements Serializable {
     private static final long serialVersionUID = -8438659167244174578L;
     /** 出发地id */
     private String oriId;
-    /** 第一个中转地id */
-    private String firstTransferId;
     /** 第二个中转地id */
-    private String secondTransferId;
+    private String transferId;
     /** 目的地id */
     private String destId;
     /** 距离 */
@@ -28,20 +26,12 @@ public class DistanceTransferResDo implements Serializable {
         this.oriId = oriId;
     }
 
-    public String getFirstTransferId() {
-        return firstTransferId;
+    public String getTransferId() {
+        return transferId;
     }
 
-    public void setFirstTransferId(String firstTransferId) {
-        this.firstTransferId = firstTransferId;
-    }
-
-    public String getSecondTransferId() {
-        return secondTransferId;
-    }
-
-    public void setSecondTransferId(String secondTransferId) {
-        this.secondTransferId = secondTransferId;
+    public void setTransferId(String transferId) {
+        this.transferId = transferId;
     }
 
     public String getDestId() {

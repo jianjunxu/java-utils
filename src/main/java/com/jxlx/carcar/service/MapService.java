@@ -313,6 +313,10 @@ public class MapService {
         return response;
     }
 
+//
+//	public static void testCallBack(){
+//
+//	}
     public static void main(String[] args) {
         MapService server = new MapService();
 //        DistanceParam param = new DistanceParam();
