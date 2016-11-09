@@ -93,7 +93,7 @@ public class CalcDestGroup {
 		for (String id : idList2) {
 			String key = oriId+"-"+id;
 			DistanceTransferResDo resDo = key2transfer.get(key);
-			String destId = key.split("-")[1];
+			String destId = id.split("-")[1];
 			DistanceResDo res = key2distance.get(oriId+"-"+destId);
 			if (resDo != null && Long.valueOf(resDo.getDistance()) - Long.valueOf(res.getDistance()) <= MAX_DISTANCE) {
 				LOGGER.info("顺路(中转)-----" + JSON.toJSONString(resDo));
