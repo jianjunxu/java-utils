@@ -4,6 +4,8 @@ import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Maps;
 import com.jxlx.carcar.entity.DistanceResDo;
 import com.jxlx.carcar.entity.DistanceTransferResDo;
+import com.jxlx.carcar.entity.LinePointDo;
+import com.jxlx.carcar.entity.PositionDo;
 import com.jxlx.carcar.entity.params.DirectionParam;
 import com.jxlx.carcar.entity.params.DistanceParam;
 import com.jxlx.carcar.entity.params.PlaceParam;
@@ -67,5 +69,14 @@ public class CarConverter {
 		resDo.setDuration("" + (Long.valueOf(transResDo.getDuration()) + Long.valueOf(destResDo.getDuration())));
 		LOGGER.info("所有可组合中转点：{}", JSON.toJSONString(resDo));
 		return resDo;
+	}
+
+	public static LinePointDo convertLinePointDo(PositionDo pDo){
+		LinePointDo res = new LinePointDo();
+		res.setId(pDo.getPid());
+		res.setName(pDo.getPname());
+		res.setLon(pDo.getLocation().split(",")[0]);
+		res.setLat(pDo.getLocation().split(",")[1]);
+		return res;
 	}
 }

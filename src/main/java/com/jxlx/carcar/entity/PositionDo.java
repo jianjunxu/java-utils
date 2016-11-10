@@ -18,7 +18,11 @@ public class PositionDo implements Serializable {
 
     public PositionDo() {
     }
-
+    public PositionDo(String pid, String pname, String location) {
+        this.pid = pid;
+        this.pname = pname;
+        this.location = location;
+    }
     public PositionDo(String pid, String pcity, String pname, String location) {
         this.pid = pid;
         this.pcity = pcity;

@@ -1,6 +1,8 @@
 package com.jxlx.jayden;
 
+import com.alibaba.fastjson.JSON;
 import com.google.common.base.Function;
+import com.jxlx.carcar.mock.MockCoordinates;
 
 /**
  * User : jianjun.xu
@@ -15,12 +17,14 @@ public class Main {
 //		List<String> transList = Lists.transform(list, TOUpperCase.INSTANCE);
 //		System.out.println(list);
 //		System.out.println(transList);
-		System.out.println((1 << 16) - 1);
-		System.out.println(Integer.toBinaryString(-1));
+//		System.out.println((1 << 16) - 1);
+//
+		System.out.println(JSON.toJSONString(MockCoordinates.initPosition()));
 	}
 
-	private enum TOUpperCase implements Function<String,String> {
+	private enum TOUpperCase implements Function<String, String> {
 		INSTANCE;
+
 		@Override
 		public String apply(String input) {
 			return input.toUpperCase();

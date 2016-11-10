@@ -6,10 +6,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.jxlx.carcar.common.Constant;
 import com.jxlx.carcar.convert.CarConverter;
-import com.jxlx.carcar.entity.DistancePointsInfo;
-import com.jxlx.carcar.entity.DistanceResDo;
-import com.jxlx.carcar.entity.DistanceTransferResDo;
-import com.jxlx.carcar.entity.PositionDo;
+import com.jxlx.carcar.entity.*;
 import com.jxlx.carcar.entity.params.DirectionParam;
 import com.jxlx.carcar.entity.result.DirectionResult;
 import com.jxlx.carcar.mock.MockCoordinates;
@@ -80,6 +77,14 @@ public class CalcDestGroup2 {
 				return input.getOriId() + "-" + input.getTransferId() + "-" + input.getDestId();
 			}
 		});
+		//*****************************
+		Map<String,PositionDo> id2pDo = Maps.uniqueIndex(MockCoordinates.initPosition(), new Function<PositionDo, String>() {
+			@Override
+			public String apply(PositionDo input) {
+				return input.getPid();
+			}
+		});
+		//*****************************
 		/** 三点 */
 		String oriId = "1000";
 		for (String id : idList2) {
@@ -88,7 +93,12 @@ public class CalcDestGroup2 {
 			String destId = id.split("-")[1];
 			DistanceResDo res = key2distance.get(oriId+"-"+destId);
 			if (resDo != null && (Long.valueOf(resDo.getDistance()) - Long.valueOf(res.getDistance()) <= MAX_DISTANCE)) {
-				LOGGER.info("顺路(中转)-----" + JSON.toJSONString(resDo));
+//				LOGGER.info("顺路(中转)-----" + JSON.toJSONString(resDo));
+				List<LinePointDo> pointDos = Lists.newArrayList();
+				pointDos.add(CarConverter.convertLinePointDo(id2pDo.get(resDo.getOriId())));
+				pointDos.add(CarConverter.convertLinePointDo(id2pDo.get(resDo.getTransferId())));
+				pointDos.add(CarConverter.convertLinePointDo(id2pDo.get(resDo.getDestId())));
+				LOGGER.info("*------"+JSON.toJSONString(pointDos));
 			}
 		}
 	}
