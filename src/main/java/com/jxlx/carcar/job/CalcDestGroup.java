@@ -43,7 +43,7 @@ public class CalcDestGroup {
 	 * 缓存中转路线
 	 */
 	private final static Map<String, List<DistanceTransferResDo>> transferCache = Maps.newHashMap();
-	private static long MAX_DISTANCE = 5000;
+	private static long MAX_DISTANCE = 2000;
 
 	static {
 		distanceTransfer();

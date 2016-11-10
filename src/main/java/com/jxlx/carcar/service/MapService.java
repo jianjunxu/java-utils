@@ -241,6 +241,7 @@ public class MapService {
 
     /**
      * 批量
+     * TODO 需优化
      */
     public List<DirectionResult>  batchDrivingDirection(List<DirectionParam> params){
         List<DirectionResult> resultList = Lists.newArrayList();
