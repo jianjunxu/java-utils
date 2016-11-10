@@ -241,17 +241,55 @@ public class MapService {
 
     /**
      * 批量
-     * TODO 需优化
      */
     public List<DirectionResult>  batchDrivingDirection(List<DirectionParam> params){
         List<DirectionResult> resultList = Lists.newArrayList();
-        for (DirectionParam param:params){
-            DirectionResult result = drivingDirection(param);
-            resultList.add(result);
+        int size = params.size();
+        List<DirectionParam> subParams = Lists.newArrayList();
+        for (int i = 0; i < size; i++) {
+            subParams.add(params.get(i));
+            if (size == 1) {
+                resultList.addAll(batchDirection(subParams));
+                subParams.clear();
+            } else {
+                if (i > 1 && ((i+1) % 20 == 0 || i == size - 1)) {
+                    resultList.addAll(batchDirection(subParams));
+                    subParams.clear();
+                }
+            }
         }
         return resultList;
     }
-
+    public List<DirectionResult> batchDirection(List<DirectionParam> subParams){
+        JSONObject params = new JSONObject();
+        JSONArray arr = new JSONArray();
+        params.put("ops", arr);
+        for (DirectionParam param : subParams) {
+            Map<String, String> map = CarConverter.convertDirectionParam(param);
+            String url = NetWorkURL.toURL(Constant.DRIVING_DIRECTION, map);
+            JSONObject entity = new JSONObject();
+            entity.put("url", url);
+            arr.add(entity);
+        }
+        LOGGER.info("url:" + Constant.MAP_API_HOST + Constant.BATCH_REQUEST_URI);
+        LOGGER.info("params:"+JSON.toJSONString(params));
+        String response = httpPostAccess(Constant.MAP_API_HOST + Constant.BATCH_REQUEST_URI, params);
+        JSONArray resultArr = JSON.parseArray(response);
+        int size = resultArr.size();
+        List<DirectionResult> resultList = new ArrayList<DirectionResult>(size);
+        for (int i = 0; i < size; i++) {
+            JSONObject object = resultArr.getJSONObject(i);
+            JSONObject result = object.getJSONObject("body");
+            resultList.add(JSON.parseObject(JSON.toJSONString(result), DirectionResult.class));
+        }
+        LOGGER.info(JSON.toJSONString(resultList));
+        for (int i = 0; i < resultList.size(); i++) {
+            resultList.get(i).setOriginId(subParams.get(i).getOriginId());
+            resultList.get(i).setDestId(subParams.get(i).getDestId());
+            resultList.get(i).setWaypointsId(subParams.get(i).getWaypointsId());
+        }
+        return resultList;
+    }
     /**
      * http get
      *
@@ -308,7 +346,7 @@ public class MapService {
                 });
                 break;
             } catch (Exception e) {
-                LOGGER.error("IOException.ex:{}", e.getMessage());
+                LOGGER.error("IOException {} times.ex:{}", (i + 1), e.getMessage(), e);
             }
         }
         return response;
@@ -340,9 +378,12 @@ public class MapService {
         DirectionParam directionParam = new DirectionParam();
         directionParam.setKey(Constant.KEY_CAR_LINE);
         directionParam.setOrigin("116.481028,39.989643");
+        directionParam.setOriginId("1000");
         directionParam.setDestination("116.434446,39.90816");
+        directionParam.setWaypointsId("787");
         directionParam.setWaypoints("116.357483,39.907234");
-        DirectionResult result = server.drivingDirection(directionParam);
+        directionParam.setDestId("6");
+        List<DirectionResult> result = server.batchDrivingDirection(Lists.newArrayList(directionParam));
         LOGGER.info("------DirectionResult:{}", JSON.toJSONString(result));
     }
 }
