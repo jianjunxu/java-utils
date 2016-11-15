@@ -6,6 +6,9 @@ import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import java.util.Calendar;
+import java.util.Date;
+
 /**
  * Created by jayden on 16/11/14.
  */
@@ -13,7 +16,10 @@ public class JodaTimeDemo {
     public static void main(String[] args) {
 //        initDate();
 //        format();
-        caleDays();
+//        caleDays();
+//        addTime();
+//        hasLeapMonth();
+        convertDate();
     }
 
     /**
@@ -76,5 +82,46 @@ public class JodaTimeDemo {
         LocalDate end = new LocalDate(2013, 01, 15);
         int days = Days.daysBetween(start, end).getDays();
         System.out.println("相隔" + days + "天.");
+    }
+
+    /**
+     * 增加时间
+     */
+    public static void addTime() {
+        //增加日期
+        DateTime dateTime = new DateTime();
+
+        dateTime = dateTime.plusDays(1) // 增加天
+                .plusYears(1)// 增加年
+                .plusMonths(1)// 增加月
+                .plusWeeks(1)// 增加星期
+                .minusMillis(1)// 减分钟
+                .minusHours(1)// 减小时
+                .minusSeconds(1);// 减秒数
+        System.out.println("-------" + dateTime);
+    }
+
+    /**
+     * 判断是否闰月
+     */
+    public static void hasLeapMonth() {
+        DateTime dt4 = new DateTime();
+        org.joda.time.DateTime.Property month = dt4.monthOfYear();
+        System.out.println("是否闰月:" + month.isLeap());
+    }
+
+    /**
+     * DateTime与java.util.Date对象,当前系统TimeMillis转换
+     */
+    public static void convertDate() {
+        DateTime dateTime = new DateTime(new Date());
+        System.out.println("----dateTime:" + dateTime);
+        Date date = dateTime.toDate();
+        System.out.println("----date:" + date);
+        DateTime dateTime1 = new DateTime(System.currentTimeMillis());
+        System.out.println("----dateTime1:" + dateTime1);
+        Calendar calendar = Calendar.getInstance();
+        DateTime dateTime2 = new DateTime(calendar);
+        System.out.println("----dateTime2:" + dateTime2);
     }
 }
