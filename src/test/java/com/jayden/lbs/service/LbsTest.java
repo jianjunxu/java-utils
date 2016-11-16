@@ -47,6 +47,7 @@ public class LbsTest {
 	 */
 	public static List<KeySearchResult> batchKeySearch(List<KeySearchParams> paramsList) {
 		Preconditions.checkArgument(!CollectionUtils.isEmpty(paramsList));
+		Preconditions.checkArgument(paramsList.size() <= 20);
 		//子请求组装参数
 		JSONArray arr = new JSONArray();
 		for (KeySearchParams keySearchParam : paramsList) {
