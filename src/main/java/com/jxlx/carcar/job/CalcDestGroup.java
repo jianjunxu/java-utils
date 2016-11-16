@@ -151,7 +151,7 @@ public class CalcDestGroup {
 			dos.add(resDo2);
 			LOGGER.info("两点距离计算结果(反)：{}", JSON.toJSONString(resDo2));
 		}
-//        List<DistanceResDo> dos = Lists.transform(resultList, new Function<DistanceResult, DistanceResDo>() {
+//        List<DistanceResDo> dto = Lists.transform(resultList, new Function<DistanceResult, DistanceResDo>() {
 //            @Override
 //            public DistanceResDo apply(DistanceResult input) {
 //                DistanceResDo resDo = new DistanceResDo();

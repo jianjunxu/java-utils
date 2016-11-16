@@ -11,7 +11,7 @@ public interface Constant {
     /** 距离测量uri */
     String DISTANCE_URI = "/v3/distance";
     /** 关键字搜索位置信息 */
-    String SEARCH_PLACE_URI = "/v3/place/text";
+    String KEY_SEARCH_URI = "/v3/place/text";
     /** 批量请求接口 */
     String BATCH_REQUEST_URI = "/v3/batch";
     /** 驾车路径规划 */

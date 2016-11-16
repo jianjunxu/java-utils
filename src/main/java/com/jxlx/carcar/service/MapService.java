@@ -145,7 +145,7 @@ public class MapService {
      */
     public PlaceResult getPlaceInfo(PlaceParam placeParam) {
         Preconditions.checkNotNull(placeParam, "PlaceParam is null.");
-        String methodURI = Constant.MAP_API_HOST + Constant.SEARCH_PLACE_URI;
+        String methodURI = Constant.MAP_API_HOST + Constant.KEY_SEARCH_URI;
         Map<String, String> parameters = CarConverter.convertPlaceParam(placeParam);
         String url = NetWorkURL.toURL(methodURI, parameters);
         String response = httpGetAccess(new HttpGet(url));
@@ -192,7 +192,7 @@ public class MapService {
         params.put("ops", arr);
         for (PlaceParam placeParam : placeParams) {
             Map<String, String> map = CarConverter.convertPlaceParam(placeParam);
-            String url = NetWorkURL.toURL(Constant.SEARCH_PLACE_URI, map);
+            String url = NetWorkURL.toURL(Constant.KEY_SEARCH_URI, map);
             JSONObject entity = new JSONObject();
             entity.put("url", url);
             arr.add(entity);
