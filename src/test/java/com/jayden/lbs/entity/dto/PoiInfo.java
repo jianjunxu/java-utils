@@ -9,6 +9,7 @@ import java.io.Serializable;
  * Desc :
  */
 public class PoiInfo implements Serializable {
+	private static final long serialVersionUID = -2273443476238965798L;
 	private String name;
 	private String location;
 	private String pcode;

@@ -12,6 +12,7 @@ import java.util.List;
  * Desc :
  */
 public class KeySearchResult implements Serializable {
+	private static final long serialVersionUID = 292280520562493744L;
 	/**
 	 * 结果状态值，值为0或1
 	 * 0：请求失败；1：请求成功

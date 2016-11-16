@@ -21,7 +21,7 @@ import java.util.Map;
 public class ConvertUtils {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ConvertUtils.class);
 
-	public static Map<String, String> convertBean2Map(Object bean) {
+	public static Map<String, String> bean2map(Object bean) {
 		Class type = bean.getClass();
 		Map returnMap = new HashMap();
 		try {
@@ -41,7 +41,7 @@ public class ConvertUtils {
 				}
 			}
 		} catch (Exception e) {
-			LOGGER.error("convertBean2Map error.", e);
+			LOGGER.error("bean2map error.", e);
 		}
 		return returnMap;
 	}

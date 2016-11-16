@@ -10,6 +10,7 @@ import java.io.Serializable;
  */
 public class KeySearchParams implements Serializable {
 
+	private static final long serialVersionUID = 1577361091007353446L;
 	/**
 	 * 请求服务权限标识
 	 */

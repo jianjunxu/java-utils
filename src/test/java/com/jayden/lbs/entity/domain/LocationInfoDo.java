@@ -10,6 +10,7 @@ import java.util.Date;
  * Desc : 对应db中location_info表
  */
 public class LocationInfoDo implements Serializable {
+	private static final long serialVersionUID = 7285146486509008184L;
 	private long id;
 	private String pCode;
 	private String pName;

@@ -7,7 +7,9 @@ import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.jayden.lbs.entity.params.KeySearchParams;
+import com.jayden.lbs.entity.params.RoutePlanParams;
 import com.jayden.lbs.entity.result.KeySearchResult;
+import com.jayden.lbs.entity.result.RoutePlanResult;
 import com.jayden.lbs.utils.ConvertUtils;
 import com.jxlx.carcar.common.Constant;
 import com.jxlx.carcar.utils.AbstractResponseHandler;
@@ -38,6 +40,42 @@ import java.util.Map;
 public class LbsTest {
 	private static final Logger LOGGER = LoggerFactory.getLogger(LbsTest.class);
 
+	public static List<RoutePlanResult> batchGetRoutPlanList(List<RoutePlanParams> paramsList){
+		Preconditions.checkArgument(!CollectionUtils.isEmpty(paramsList));
+		Preconditions.checkArgument(paramsList.size() <= 20);
+		//子请求组装参数
+		JSONArray arr = new JSONArray();
+		for (RoutePlanParams routePlanParams : paramsList) {
+			Map<String, String> map = ConvertUtils.bean2map(routePlanParams);
+			String url = NetWorkURL.toURL(Constant.DRIVING_DIRECTION, map);
+			JSONObject entity = new JSONObject();
+			entity.put("url", url);
+			arr.add(entity);
+		}
+		//批量接口参数设置
+		JSONObject params = new JSONObject();
+		params.put("ops", arr);
+		LOGGER.info("url:" + Constant.MAP_API_HOST + Constant.BATCH_REQUEST_URI);
+		LOGGER.info("params:" + JSON.toJSONString(params));
+		String response = httpBatchPost(params);
+		//请求结果处理
+		JSONArray jsonArray = JSON.parseArray(response);
+		int size = jsonArray.size();
+		List<RoutePlanResult> resultList = new ArrayList<RoutePlanResult>(size);
+		for (int i = 0; i < size; i++) {
+			JSONObject object = jsonArray.getJSONObject(i);
+			JSONObject result = object.getJSONObject("body");
+			RoutePlanResult ksResult = JSON.parseObject(JSON.toJSONString(result), RoutePlanResult.class);
+			//
+			ksResult.setOriId(paramsList.get(i).getOriId());
+			ksResult.setTransferId(paramsList.get(i).getTransferId());
+			ksResult.setDestId(paramsList.get(i).getDestId());
+			resultList.add(ksResult);
+		}
+		LOGGER.info(JSON.toJSONString(resultList));
+		return resultList;
+	}
+
 	/**
 	 * 单个查询
 	 * eg.http://restapi.amap.com/v3/place/text?key=您的key&keywords=北京大学&types=高等院校&city=北京&children=0&offset=1&page=1&extensions=all
@@ -51,7 +89,7 @@ public class LbsTest {
 		//子请求组装参数
 		JSONArray arr = new JSONArray();
 		for (KeySearchParams keySearchParam : paramsList) {
-			Map<String, String> map = ConvertUtils.convertBean2Map(keySearchParam);
+			Map<String, String> map = ConvertUtils.bean2map(keySearchParam);
 			String url = NetWorkURL.toURL(Constant.KEY_SEARCH_URI, map);
 			JSONObject entity = new JSONObject();
 			entity.put("url", url);
@@ -112,18 +150,23 @@ public class LbsTest {
 	}
 
 	public static void main(String[] args) {
-		List<KeySearchParams> paramsList = Lists.newArrayList(
-				mock("天安门"),
-				mock("故宫"),
-				mock("天坛"),
-				mock("北京大学"),
-				mock("北京首都国际机场")
+//		List<KeySearchParams> paramsList = Lists.newArrayList(
+//				mockKSParams("天安门"),
+//				mockKSParams("故宫"),
+//				mockKSParams("天坛"),
+//				mockKSParams("北京大学"),
+//				mockKSParams("北京首都国际机场")
+//		);
+//		List<KeySearchResult> results = batchKeySearch(paramsList);
+//		System.out.println("----" + JSON.toJSONString(results));
+		List<RoutePlanParams> paramsList = Lists.newArrayList(
+				mockRPParams()
 		);
-		List<KeySearchResult> results = batchKeySearch(paramsList);
+		List<RoutePlanResult> results = batchGetRoutPlanList(paramsList);
 		System.out.println("----" + JSON.toJSONString(results));
 	}
 
-	private static KeySearchParams mock(String keywords){
+	private static KeySearchParams mockKSParams(String keywords){
 		KeySearchParams params = new KeySearchParams();
 		params.setKey(Constant.KEY_CAR_LINE);
 		params.setChildren("0");
@@ -135,6 +178,17 @@ public class LbsTest {
 		params.setPage("1");
 		params.setOutput("JSON");
 		params.setId(RandomUtils.nextLong());
+		return params;
+	}
+	private static RoutePlanParams mockRPParams(){
+		RoutePlanParams params = new RoutePlanParams();
+		params.setKey(Constant.KEY_CAR_LINE);
+		params.setOriId("1001");//望京soho
+		params.setOrigin("116.480665,39.996404");
+		params.setTransferId("1002");//天安门
+		params.setWaypoints("116.397477,39.908692");
+		params.setDestId("1003");//故宫
+		params.setDestination("116.397026,39.918058");
 		return params;
 	}
 }
